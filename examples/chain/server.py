@@ -6,6 +6,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from langchain.chat_models import ChatOpenAI
 from langchain.prompts import PromptTemplate
+from langchain.schema.messages import BaseMessage
 
 # from typing_extensions import TypedDict
 from langchain.pydantic_v1 import BaseModel
@@ -21,7 +22,7 @@ model = ChatOpenAI(temperature=0.5).configurable_alternatives(
     default_key="medium_temp",
 )
 prompt = PromptTemplate.from_template(
-    "tell me a joke about {topic}.\nChat history: {chat_history}"
+    "tell me a joke about {topic}."
 ).configurable_fields(
     template=ConfigurableField(
         id="prompt",
@@ -61,6 +62,7 @@ class ChainInput(BaseModel):
 
     topic: str
     """The topic of the joke."""
+    chat_history_messages: List[BaseMessage]
     chat_history: List[str]
     chat_history_tuples: List[Tuple[str, str]]
     chat_history_object_list: List[Dict[str, str]]
