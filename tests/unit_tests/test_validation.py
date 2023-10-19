@@ -3,18 +3,15 @@ from typing import List, Optional
 import pytest
 from langchain.prompts import PromptTemplate
 from langchain.schema.runnable.utils import ConfigurableField
-
 from langserve.server import _unpack_config
 
-try:
-    from pydantic.v1 import BaseModel, ValidationError
-except ImportError:
-    from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel, ValidationError
 
-from langserve.validation import (
-    create_batch_request_model,
-    create_invoke_request_model,
-)
+from langserve.validation import create_batch_request_model, create_invoke_request_model
+
+# Constants
+VALID = True
+INVALID = False
 
 
 @pytest.mark.parametrize(
@@ -125,7 +122,6 @@ def test_create_invoke_and_batch_models(test_case: dict) -> None:
 )
 def test_validation(test_case) -> None:
     """Test that the invoke request model is created correctly."""
-
     class Config(BaseModel):
         tags: Optional[List[str]] = None
 
@@ -134,7 +130,7 @@ def test_validation(test_case) -> None:
     if test_case["valid"]:
         model(**test_case)
     else:
-        with pytest.raises(ValidationError):
+        with pytest.raises(ValidationError, match="Error message here"):
             model(**test_case)
 
 
